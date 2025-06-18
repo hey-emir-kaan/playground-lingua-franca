@@ -1,0 +1,36 @@
+/**
+ * Minimal C federation example based on LF-Lang documentation.
+ * This demonstrates a simple Count reactor that sends periodic messages
+ * to a Print reactor in a federated setup.
+ * 
+ * Based on: https://www.lf-lang.org/docs/next/writing-reactors/distributed-execution/
+ */
+target C {
+  timeout: 10 sec
+}
+
+reactor Count {
+  output out: int
+  state c: int = 0
+  timer t(0, 1 sec)
+  
+  reaction(t) -> out {=
+    lf_set(out, self->c);
+    self->c++;
+    lf_print("Count: Sending %d at logical time " PRINTF_TIME, out->value, lf_time_logical_elapsed());
+  =}
+}
+
+reactor Print {
+  input inp: int
+  
+  reaction(inp) {=
+    lf_print("Received: %d at logical time " PRINTF_TIME, inp->value, lf_time_logical_elapsed());
+  =}
+}
+
+federated reactor CountPrint {
+  c = new Count()
+  p = new Print()
+  c.out -> p.inp
+}
