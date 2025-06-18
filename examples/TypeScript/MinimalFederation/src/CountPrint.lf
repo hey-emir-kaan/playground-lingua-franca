@@ -1,0 +1,36 @@
+/**
+ * Minimal TypeScript federation example based on LF-Lang documentation.
+ * This demonstrates a simple Count reactor that sends periodic messages
+ * to a Print reactor in a federated setup.
+ * 
+ * Based on: https://www.lf-lang.org/docs/next/writing-reactors/distributed-execution/
+ */
+target TypeScript {
+  timeout: 10 secs
+}
+
+reactor Count {
+  output out: number
+  state c: number = 0
+  timer t(0, 1 sec)
+  
+  reaction(t) -> out {=
+    out = c;
+    c++;
+    console.log(`Count: Sending ${out} at logical time ${util.getElapsedLogicalTime()}`);
+  =}
+}
+
+reactor Print {
+  input inp: number
+  
+  reaction(inp) {=
+    console.log(`Received: ${inp} at logical time ${util.getElapsedLogicalTime()}`);
+  =}
+}
+
+federated reactor CountPrint {
+  c = new Count()
+  p = new Print()
+  c.out -> p.inp
+}
