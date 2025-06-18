@@ -43,3 +43,27 @@ bash ./utils/scripts/setup-lf.bash dev
 
 Please note that running these commands will remove the current lingua-franca directory.
 
+#### :hammer_and_wrench: Complete Development Setup from Source
+For developers who want to modify the LF-Lang toolchain and runtime components, you can set up the complete ecosystem from source:
+
+```bash
+# Set up complete LF ecosystem from source (clones all repos and builds everything)
+bash ./utils/scripts/setup-lf-dev-ecosystem.bash
+
+# Activate the development environment 
+source ./utils/scripts/activate-lf-dev-env.bash
+```
+
+This setup provides:
+- Complete LF-Lang ecosystem cloned to `lf-ecosystem/` directory
+- All components built from source (lingua-franca compiler, reactor runtimes)
+- Independent access to all ecosystem repositories for development
+- Environment configured to use source-built tools
+
+The ecosystem includes:
+- `lingua-franca/` - Main compiler and toolchain
+- `reactor-c/` - C/C++ runtime
+- `reactor-cpp/` - C++ runtime (standalone)
+- `reactor-ts/` - TypeScript runtime
+- `lf-python-support/` - Python support library
+
