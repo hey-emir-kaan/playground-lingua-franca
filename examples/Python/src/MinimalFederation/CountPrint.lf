@@ -1,0 +1,33 @@
+/**
+ * Minimal Python federation example based on LF-Lang documentation.
+ * This demonstrates a simple Count reactor that sends periodic messages
+ * to a Print reactor in a federated setup.
+ * 
+ * Based on: https://www.lf-lang.org/docs/next/writing-reactors/distributed-execution/
+ */
+target Python
+
+reactor Count {
+  output out
+  state c = 0
+  timer t(0, 1 sec)
+  
+  reaction(t) -> out {=
+    out.set(self.c)
+    self.c += 1
+  =}
+}
+
+reactor Print {
+  input inp
+  
+  reaction(inp) {=
+    print(f"Received: {inp.value} at logical time ({lf.time.logical_elapsed()//1000000} ms, {lf.tag().microstep})")
+  =}
+}
+
+federated reactor {
+  c = new Count()
+  p = new Print()
+  c.out -> p.inp
+}
